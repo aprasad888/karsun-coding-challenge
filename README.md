@@ -10,16 +10,21 @@
 
 # Test your application
 
-Generated application comes with sample test process that allows you to verify if the application is working as expected. Simply execute following command to try it out
+# POST /orders
+Allows to create a new order with the given data:
 
 ```sh
-curl -d '{}' -H "Content-Type: application/json" -X POST http://localhost:8080/greetings
-                                                             
+
+curl -d '{"order" : {"total": 100.05, "item": {"name": "Asics", "quantity": 35}, "customer": {"name": "Anusha", "address": "123 Cherry Lane", "creditCard": {"name": "Anusha", "number": "123456789", "cvc": "123", "zip": "20147", "expiryDate": "01/25"}}}}, ' -H "Content-Type: application/json" -X POST http://localhost:8080/orders              
 ```
 
-Once successfully invoked you should see "Hello World" in the console of the running application.
+# Get /orders
+Returns list of orders currently active:
 
-The generated application provides out of the box multiple samples of Kogito assets; you can reference the generated Swagger documentation and JUnit tests.
+```sh
+
+curl -X GET http://localhost:8080/orders                                                       
+```
 
 # Developing
 
