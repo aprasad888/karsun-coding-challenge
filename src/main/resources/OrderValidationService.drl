@@ -1,0 +1,56 @@
+package org.karsun
+unit OrderValidationService;
+
+import org.karsun.Order;
+import org.karsun.Customer;
+import org.karsun.OrderValidResponse; 
+import org.karsun.Item; 
+import org.karsun.ItemStore;
+
+rule "Is Not Valid Because of Low Stock"
+when
+    /items[ itemName : name, itemQuantity: quantity ]
+    $order: /orders[ item.name == itemName, item.quantity > itemQuantity ]
+then
+    orderValidResponses.add(new OrderValidResponse(false, "Your order could not be validated since your item has low availability. Please consider reducing your item count or finding another available item!"));
+end
+
+rule "Is Not Valid Because of No Stock"
+when
+    /items[ itemName : name, itemQuantity: quantity ]
+    $order: /orders[ item.name == itemName, itemQuantity <= 0 ]
+then
+    orderValidResponses.add(new OrderValidResponse(false, "Your order could not be validated since it is no longer available. Please find another item that is available!"));
+end
+
+rule "Is Not Valid Because of No Customer Information"
+when
+    $order: /orders[ customer == null ]
+then
+    orderValidResponses.add(new OrderValidResponse(false, "Your order could not be validated since you did not provide any customer information. Please resubmit and try again!"));
+end
+
+rule "Is Not Valid Because of Customer Credit Card"
+when
+    $order: /orders[ customer != null, customer.creditCard == null ]
+then
+    orderValidResponses.add(new OrderValidResponse(false, "Your order could not be validated since you did not provide a credit card. Please resubmit and try again!"));
+end
+
+rule "Is Not Valid Because of Customer Address"
+when
+    $order: /orders[ customer != null, customer.address == null ]
+then
+    orderValidResponses.add(new OrderValidResponse(false, "Your order could not be validated since you did not provide a delivery address. Please resubmit and try again!"));
+end
+
+rule "Is Valid"
+when
+    /items[ itemName : name, itemQuantity: quantity > 1 ]
+    $order: /orders[ customer != null, customer.creditCard != null, customer.address != null, item.name == itemName, item.quantity < itemQuantity]
+    $item: /items[ name == $order.getItem().getName(), quantity > 1, quantity > $order.getItem().getQuantity()]
+then
+    orderValidResponses.add(new OrderValidResponse(true, "Order is valid"));
+    items.remove($item);
+    items.add(new Item($item.getName(), $item.getQuantity() - $order.getItem().getQuantity()));
+end
