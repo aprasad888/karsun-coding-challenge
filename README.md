@@ -10,7 +10,7 @@
 
 # Test your application
 
-# POST /orders
+## POST /orders
 Allows to create a new order with the given data:
 
 ```sh
@@ -18,7 +18,7 @@ Allows to create a new order with the given data:
 curl -d '{"order" : {"total": 100.05, "item": {"name": "Asics", "quantity": 35}, "customer": {"name": "Anusha", "address": "123 Cherry Lane", "creditCard": {"name": "Anusha", "number": "123456789", "cvc": "123", "zip": "20147", "expiryDate": "01/25"}}}}, ' -H "Content-Type: application/json" -X POST http://localhost:8080/orders              
 ```
 
-# Get /orders
+## Get /orders
 Returns list of orders currently active:
 
 ```sh
